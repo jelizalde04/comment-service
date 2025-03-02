@@ -1,0 +1,61 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "List Comments Microservice API",
+      "version": "1.0",
+      "description": "This is a microservice to list comments on a recipe."
+    },
+    "paths": {
+      "/recipes/{recipe_id}/comments": {
+        "get": {
+          "summary": "List comments",
+          "description": "List all comments for a specific recipe",
+          "parameters": [
+            {
+              "name": "recipe_id",
+              "in": "path",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of comments",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Comment"
+                }
+              }
+            },
+            "404": {
+              "description": "Recipe not found"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "recipe_id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
