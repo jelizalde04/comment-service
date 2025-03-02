@@ -1,0 +1,50 @@
+name: CI/CD for Comment Permission Microservice
+
+on:
+  push:
+    branches:
+      - test
+    paths:
+      - 'comment-modification-permission-microservice/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker
+
+      - name: Build Docker image
+        run: |
+          cd comment-modification-permission-microservice
+          docker build -t comment-permission-microservice .
+
+      - name: Log in to AWS ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <your-ecr-repo-url>
+
+      - name: Tag Docker image
+        run: |
+          cd comment-modification-permission-microservice
+          docker tag comment-permission-microservice:latest <your-ecr-repo-url>/comment-permission-microservice:latest
+
+      - name: Push Docker image
+        run: |
+          cd comment-modification-permission-microservice
+          docker push <your-ecr-repo-url>/comment-permission-microservice:latest
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@<your-ec2-ip> "
+            docker pull <your-ecr-repo-url>/comment-permission-microservice:latest
+            docker stop comment-permission-microservice || true
+            docker rm comment-permission-microservice || true
+            docker run -d -p 7005:7005 --name comment-permission-microservice <your-ecr-repo-url>/comment-permission-microservice:latest
+          "
