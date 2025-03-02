@@ -1,0 +1,50 @@
+name: CI/CD for List Comments Microservice
+
+on:
+  push:
+    branches:
+      - test
+    paths:
+      - 'list-comments-microservice/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker
+
+      - name: Build Docker image
+        run: |
+          cd list-comments-microservice
+          docker build -t list-comments-microservice .
+
+      - name: Log in to AWS ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <your-ecr-repo-url>
+
+      - name: Tag Docker image
+        run: |
+          cd list-comments-microservice
+          docker tag list-comments-microservice:latest <your-ecr-repo-url>/list-comments-microservice:latest
+
+      - name: Push Docker image
+        run: |
+          cd list-comments-microservice
+          docker push <your-ecr-repo-url>/list-comments-microservice:latest
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@<your-ec2-ip> "
+            docker pull <your-ecr-repo-url>/list-comments-microservice:latest
+            docker stop list-comments-microservice || true
+            docker rm list-comments-microservice || true
+            docker run -d -p 7004:7004 --name list-comments-microservice <your-ecr-repo-url>/list-comments-microservice:latest
+          "
