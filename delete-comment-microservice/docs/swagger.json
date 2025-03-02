@@ -1,0 +1,35 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Delete Comment Microservice API",
+      "version": "1.0",
+      "description": "This is a microservice to delete comments on recipes."
+    },
+    "paths": {
+      "/comments/{id}": {
+        "delete": {
+          "summary": "Delete a comment",
+          "description": "Delete a comment on a recipe",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Comment deleted successfully"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Comment not found"
+            }
+          }
+        }
+      }
+    }
+  }
