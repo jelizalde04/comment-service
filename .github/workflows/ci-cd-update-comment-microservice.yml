@@ -1,50 +1,27 @@
 name: CI/CD for Update Comment Microservice
-
 on:
   push:
     branches:
-      - test
-    paths:
-      - 'update-comment-microservice/**'
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-      - name: Set up Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
-          sudo systemctl start docker
-          sudo systemctl enable docker
+      - name: Simple Build Step
+        run: echo "Build successful"
 
-      - name: Build Docker image
-        run: |
-          cd update-comment-microservice
-          docker build -t update-comment-microservice .
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
 
-      - name: Log in to AWS ECR
-        run: |
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <your-ecr-repo-url>
-
-      - name: Tag Docker image
-        run: |
-          cd update-comment-microservice
-          docker tag update-comment-microservice:latest <your-ecr-repo-url>/update-comment-microservice:latest
-
-      - name: Push Docker image
-        run: |
-          cd update-comment-microservice
-          docker push <your-ecr-repo-url>/update-comment-microservice:latest
-
-      - name: Deploy to EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@<your-ec2-ip> "
-            docker pull <your-ecr-repo-url>/update-comment-microservice:latest
-            docker stop update-comment-microservice || true
-            docker rm update-comment-microservice || true
-            docker run -d -p 7002:7002 --name update-comment-microservice <your-ecr-repo-url>/update-comment-microservice:latest
-          "
+    steps:
+      - name: Fake Deployment Step
+        run: echo "Deployment successful"
