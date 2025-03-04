@@ -1,0 +1,43 @@
+# 🚀 Comment Service - Microservices Architecture
+
+## 📌 Overview
+The **Comment Service** is a distributed **microservices-based system** for managing user comments efficiently. Each microservice is **independent**, deployed separately, and communicates using **REST, WebSocket, WebHook, RPC, and SOAP**.
+
+## 🏗 Microservices Overview
+
+### 1️⃣ Comment Modification Permission Microservice
+- **Purpose:** Manages permissions for modifying comments.
+- **Security:** JWT authentication, CORS, rate limiting, DDoS protection.
+- **Communication:** REST API.
+
+### 2️⃣ Create Comment Microservice
+- **Purpose:** Handles the creation of new comments.
+- **Security:** JWT authentication, data validation, rate limiting.
+- **Communication:** REST API, WebHook.
+
+### 3️⃣ Delete Comment Microservice
+- **Purpose:** Manages the deletion of comments.
+- **Security:** JWT authentication, access control, IP blocking.
+- **Communication:** REST API, RPC.
+
+### 4️⃣ List Comments Microservice
+- **Purpose:** Retrieves and lists comments with filtering options.
+- **Security:** JWT authentication, rate limiting, DDoS protection.
+- **Communication:** REST API, WebSocket.
+
+### 5️⃣ Update Comment Microservice
+- **Purpose:** Updates existing comments.
+- **Security:** JWT authentication, input validation, rate limiting.
+- **Communication:** REST API, SOAP.
+
+## 🔐 Security Measures
+- **Authentication:** JWT-based authorization.
+- **Data Protection:** Input validation and data encryption.
+- **DDoS & EDoS Mitigation:** Rate limiting, IP blocking.
+- **CORS Implementation:** Controlled cross-origin access.
+- **API Documentation:** Integrated **Swagger UI**.
+
+## 🛠 Deployment & CI/CD
+Each microservice is **independently deployed** on **separate EC2 instances** using **GitHub Actions**:
+- **Automated builds & testing** via CI/CD pipelines.
+- **Isolated deployment** for scalability and fault tolerance.
